@@ -1,0 +1,24 @@
+{
+  "name": "twitter-crypto-bot",
+  "version": "1.0.0",
+  "description": "A twitter bot that will tweet real time cryptocurrency prices, data, and news",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marioaburto10/twitter-crypto-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marioaburto10/twitter-crypto-bot/issues"
+  },
+  "homepage": "https://github.com/marioaburto10/twitter-crypto-bot#readme",
+  "dependencies": {
+    "twit": "^2.2.9",
+    "twitter": "^1.7.1"
+  }
+}
