@@ -34,7 +34,7 @@ Twitter.get('search/tweets', params, function(err, data, response) {
         if(err){
           console.log(err[0].message);
         }
-        // If the retweeting is successful, log the url of the tweet
+        // If the retweeting is successful, log the ID of the tweet
         else{
           let username = response.user.screen_name;
           let tweetId = response.id_str;
