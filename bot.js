@@ -11,8 +11,21 @@ var herokuConfig = {
   access_token_secret: process.env['access_token_secret']
 }
 
+let config;
+
+// if app is being deployed to heroku, use herokuConfig
+// else use local config file
+if(process.env.NODE_ENV == 'production'){
+  config = herokuConfig;
+}
+else{
+  config = require('./config.js');
+}
+
+
+
 //putting our configuration details in twitter
-var Twitter = new Twit(herokuConfig);
+var Twitter = new Twit(config);
 
 //upon running the bot, tweet the latest top ten crypto prices
 tweetLatestPrices();
