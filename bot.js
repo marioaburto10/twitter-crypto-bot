@@ -31,7 +31,7 @@ var Twitter = new Twit(config);
 tweetLatestPrices();
 
 // tweet latest crypto news every 29 mins
-setInterval(tweetLatestCryptoNews, 1000*60*30);
+setInterval(tweetLatestCryptoNews, 1000*60*29);
 
 // tweet latest prices once an hour
 setInterval(tweetLatestPrices, 1000*60*60);
