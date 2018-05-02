@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/marioaburto10/twitter-crypto-bot#readme",
   "dependencies": {
+    "request": "^2.85.0",
     "twit": "^2.2.9",
     "twitter": "^1.7.1"
   }
