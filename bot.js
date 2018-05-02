@@ -1,17 +1,11 @@
 //Require dependencies
+var config = require('./config.js');
 var Twit = require('twit');
-console.log("HELLO WORLD");
-// var config = require('./config.js'); 
 var request = require("request");
-// console.log(config);
+console.log(config);
 
 //putting our configuration details in twitter
-var Twitter = new Twit({  
-  consumer_key: 'ndlCxPJ7BKLOIIs2Ij8f0doxT',
-  consumer_secret: 'JDrZMm2Lvae8RW3eWF1GlorDvULJ013OF9BHrYgvpWls82szou',
-  access_token: '934237301240188929-RmIZ5N3fbMJ13EEBNfrGgX8ua5L98yt',
-  access_token_secret: 'ehx9eKowVrjCk8SNlIjoytZc7GLMCe1nqdbCliwQJW75Z'
-});
+var Twitter = new Twit(config);
 
 //upon running the bot, tweet the latest top ten crypto prices
 tweetLatestPrices();
