@@ -1,11 +1,18 @@
 //Require dependencies
-var config = require('./config.js');
+// var config = require('./config.js');
 var Twit = require('twit');
 var request = require("request");
-console.log(config);
+
+// use this config when deploying to Heroku
+var herokuConfig = {
+  consumer_key: process.env['consumer_key'],
+  consumer_secret: process.env['consumer_secret'],
+  access_token: process.env['access_token'],
+  access_token_secret: process.env['access_token_secret']
+}
 
 //putting our configuration details in twitter
-var Twitter = new Twit(config);
+var Twitter = new Twit(herokuConfig);
 
 //upon running the bot, tweet the latest top ten crypto prices
 tweetLatestPrices();
