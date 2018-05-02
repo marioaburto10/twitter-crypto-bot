@@ -2,6 +2,7 @@
 var Twit = require('twit');
 var config = require('./config.js'); 
 var request = require("request");
+console.log(config);
 
 //putting our configuration details in twitter
 var Twitter = new Twit(config);
