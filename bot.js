@@ -6,152 +6,173 @@ var request = require("request");
 //putting our configuration details in twitter
 var Twitter = new Twit(config);
 
+//upon running the bot, tweet the latest top ten crypto prices
+tweetLatestPrices();
 
-// run a request to the cryptopanic API 
-// request("https://cryptopanic.com/api/posts/?auth_token=b3452c8af088c05e6ca151617bac9b9146c004b8&public=true", function(err, response, body) {
+// tweet latest crypto news every 29 mins
+setInterval(tweetLatestCryptoNews, 1000*60*30);
 
-//   // If the request is successful (i.e. if the response status code is 200)
-//   if (!err && response.statusCode === 200) {
+// tweet latest prices once an hour
+setInterval(tweetLatestPrices, 1000*60*60);
 
-//     // Parse the body of the site and recover the data coming back
-//     // console.log("The data coming back is : " + JSON.parse(body).results);
+// retweet the latest crypto tweets every 3.9 hours
+setInterval(retweetPopularTweets, 1000*60*60*3.9);
+
+
+// function that will tweet the latest news article headline and url
+function tweetLatestCryptoNews() {
     
-//     // parse the results coming back and save them in a variable
-//     const results = JSON.parse(body).results[1]
+    // send a request to the cryptopanic API 
+    request("https://cryptopanic.com/api/posts/?auth_token=b3452c8af088c05e6ca151617bac9b9146c004b8&public=true", function(err, response, body) {
 
-//     // storing article headline
-//     let newsHeadline = results.title;
+    // If the request is successful (i.e. if the response status code is 200)
+    if (!err && response.statusCode === 200) {
 
-//     // storing article url
-//     let link = results.url;
+      // Parse the body of the site and recover the data coming back
+      // console.log("The data coming back is : " + JSON.parse(body).results);
+      
+      // parse the results coming back and save them in a variable
+      const results = JSON.parse(body).results[1]
 
-//     // creating a variable to store a coin ticker
-//     let ticker;
+      // storing article headline
+      let newsHeadline = results.title;
 
-//     // if the article has a coin ticker then store it
-//     if (results.currencies) {
-//       ticker = results.currencies[0].code;
-//     }
+      // storing article url
+      let link = results.url;
 
-//     console.log("headline : ", newsHeadline);
+      // creating a variable to store a coin ticker
+      let ticker;
 
+      // if the article has a coin ticker then store it
+      if (results.currencies) {
+        ticker = results.currencies[0].code;
+      }
 
-//     // if a ticker exists, post a tweet with the ticker, if not then just post a tweet with the headline and url
-//     if (ticker) {
-//       // send a post request to twitter with the status being the news headline
-//       Twitter.post('statuses/update', { status: newsHeadline + " " + link + " " +  "$" + ticker + " #cryptonews" +  " #crypto"}, function(err, data, response) {
-
-//         // if there is an error, log the error
-//         if(err){
-//           console.log(err);
-//         }
-//         // if there is no error, log the data coming back
-//         else {
-//           console.log(data.text);
-//           console.log("------ YES ticker");
-//         }
-
-//       });
-//     }
-//     else {
-//       // send a post request to twitter with the status being the news headline
-//       Twitter.post('statuses/update', { status: newsHeadline + " " + link + " #cryptonews" +  " #crypto"}, function(err, data, response) {
-
-//         // if there is an error, log the error
-//         if(err){
-//           console.log(err);
-//         }
-//         // if there is no error, log the data coming back
-//         else {
-//           console.log(data.text);
-//           console.log("------ NO ticker");
-//         }
-
-//       });
-//     }
-
-//   }
-// });
+      console.log("headline : ", newsHeadline);
 
 
-// send a request to the coinmarketcap API for the top 10 coins
-request("https://api.coinmarketcap.com/v2/ticker/?limit=10", function(err, response, body) {
-  // If the request is successful (i.e. if the response status code is 200)
-  if (!err && response.statusCode === 200) {
+      // if a ticker exists, post a tweet with the ticker, if not then just post a tweet with the headline and url
+      if (ticker) {
+        // send a post request to twitter with the status being the news headline
+        Twitter.post('statuses/update', { status: newsHeadline + " " + link + " " +  "$" + ticker + " #cryptonews" +  " #crypto"}, function(err, data, response) {
 
-    
-    // parse the results coming back and save them in a variable called data
-    const data = JSON.parse(body).data
-    // console.log(data);
+          // if there is an error, log the error
+          if(err){
+            console.log(err);
+          }
+          // if there is no error, log the data coming back
+          else {
+            console.log(data.text);
+            console.log("------ YES ticker");
+          }
 
-    // create a variable to store the tweet
-    let tweet = "LATEST PRICES FOR TOP 10 COINS: ";
+        });
+      }
+      else {
+        // send a post request to twitter with the status being the news headline
+        Twitter.post('statuses/update', { status: newsHeadline + " " + link + " #cryptonews" +  " #crypto"}, function(err, data, response) {
 
-    // iterate through the data object that hold the top 10 cryptocurrencies
-    for (var property in data) {
-      tweet = tweet + " $" + data[property].symbol + " =" + " " + data[property].quotes.USD.price + "USD | " ;
+          // if there is an error, log the error
+          if(err){
+            console.log(err);
+          }
+          // if there is no error, log the data coming back
+          else {
+            console.log(data.text);
+            console.log("------ NO ticker");
+          }
+
+        });
+      }
+
+    }
+  });
+}
+
+
+
+// function that will tweet the latest top 10 crypto prices
+function tweetLatestPrices() {
+  // send a request to the coinmarketcap API for the top 10 coins
+  request("https://api.coinmarketcap.com/v2/ticker/?limit=10", function(err, response, body) {
+    // If the request is successful (i.e. if the response status code is 200)
+    if (!err && response.statusCode === 200) {
+
+      
+      // parse the results coming back and save them in a variable called data
+      const data = JSON.parse(body).data
+      // console.log(data);
+
+      // create a variable to store the tweet
+      let tweet = "LATEST PRICES FOR TOP 10 COINS: ";
+
+      // iterate through the data object that hold the top 10 cryptocurrencies
+      for (var property in data) {
+        tweet = tweet + " $" + data[property].symbol + " =" + " " + data[property].quotes.USD.price + "USD | " ;
+      }
+
+      console.log(tweet);
+
+        // send a post request to twitter with the status being the news headline
+        Twitter.post('statuses/update', { status: tweet }, function(err, data, response) {
+
+          // if there is an error, log the error
+          if(err){
+            console.log(err);
+          }
+          // if there is no error, log the data coming back
+          else {
+            console.log(data.text);
+            console.log("------ PRICES HAVE BEEN TWEETED");
+          }
+
+        });
+
     }
 
-    console.log(tweet);
 
-      // send a post request to twitter with the status being the news headline
-      Twitter.post('statuses/update', { status: tweet }, function(err, data, response) {
+  });
+}
 
-        // if there is an error, log the error
-        if(err){
-          console.log(err);
-        }
-        // if there is no error, log the data coming back
-        else {
-          console.log(data.text);
-          console.log("------ PRICES HAVE BEEN TWEETED");
-        }
 
-      });
 
+// function that will find the 2 most popular tweets on crypto and retweet them
+function retweetPopularTweets() {
+  // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
+  // this will be passed in the get request to Twitter
+  var params = {
+    q: '#crypto',
+    count: 2,
+    result_type: 'popular',
+    lang: 'en'
   }
 
-
-});
-
-
-
-// ----------- SEARCH FOR LATEST TWEETS AND RETWEET THEM -------------
-
-// q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
-// var params = {
-// q: '#crypto',
-// count: 10,
-// result_type: 'recent',
-// lang: 'en'
-// }
-
-
-// attach the search parameters into the get request to find tweets
-// make a get request to search/tweets and pass in our search .
-// Twitter.get('search/tweets', params, function(err, data, response) {
-//   // If there is no error, proceed
-//   if(!err){
-//     // Loop through the returned tweets
-// 	   //our request will return an array of multiple tweets via the data.statuses object.
-//     for(let i = 0; i < data.statuses.length; i++){
-//       // Get the tweet Id from the returned data
-//       let id = { id: data.statuses[i].id_str }
-//       // send a post request to retweet a status with a certain ID
-//       Twitter.post('statuses/retweet/:id', id, function(err, response){
-//         // If the retweeting fails, log the error message
-//         if(err){
-//           console.log(err[0].message);
-//         }
-//         // If the retweeting is successful, log the ID of the tweet
-//         else{
-//           let username = response.user.screen_name;
-//           let tweetId = response.id_str;
-//           console.log(`${username} retweeted tweet with ID ${tweetId}`)
-//         }
-//       });
-//     }
-//   } else {
-//     console.log(err);
-//   }
-// })
+  // attach the search parameters into the get request to find tweets
+  // make a get request to search/tweets and pass in search 
+  Twitter.get('search/tweets', params, function(err, data, response) {
+    // If there is no error, proceed
+    if(!err){
+      // Loop through the returned tweets
+      //our request will return an array of multiple tweets via the data.statuses object.
+      for(let i = 0; i < data.statuses.length; i++){
+        // Get the tweet Id from the returned data
+        let id = { id: data.statuses[i].id_str }
+        // send a post request to retweet a status with a certain ID
+        Twitter.post('statuses/retweet/:id', id, function(err, response){
+          // If the retweeting fails, log the error message
+          if(err){
+            console.log(err[0].message);
+          }
+          // If the retweeting is successful, log the ID of the tweet
+          else{
+            let username = response.user.screen_name;
+            let tweetId = response.id_str;
+            console.log(`${username} retweeted tweet with ID ${tweetId}`)
+          }
+        });
+      }
+    } else {
+      console.log(err);
+    }
+  });
+}
