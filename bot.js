@@ -1,5 +1,6 @@
 //Require dependencies
 var Twit = require('twit');
+console.log("HELLO WORLD");
 var config = require('./config.js'); 
 var request = require("request");
 console.log(config);
