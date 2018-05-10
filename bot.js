@@ -32,18 +32,18 @@ else{
 //putting our configuration details in twitter
 var Twitter = new Twit(config);
 
+//upon running the bot, tweet the latest top ten crypto prices
+tweetLatestPrices();
 
-// //upon running the bot, tweet the latest top ten crypto prices
-retweetPopularTweets();
 
 // tweet latest crypto news every 29 mins
-// setInterval(tweetLatestCryptoNews, 1000*60*29);
+setInterval(tweetLatestCryptoNews, 1000*60*29);
 
 // tweet latest prices once an hour
-// setInterval(tweetLatestPrices, 1000*60*60);
+setInterval(tweetLatestPrices, 1000*60*60);
 
-// retweet the latest crypto tweets every 3.9 hours
-// setInterval(retweetPopularTweets, 1000*60*60*3.9);
+// retweet the top two most recent crypto tweets every 3.9 hours
+setInterval(retweetMostRecentTweets, 1000*60*60*3.9);
 
 
 
@@ -171,7 +171,7 @@ function tweetLatestPrices() {
 
 
 // function that will find the 2 most popular tweets on crypto and retweet them
-function retweetPopularTweets() {
+function retweetMostRecentTweets() {
   // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
   // this will be passed in the get request to Twitter
   var params = {
