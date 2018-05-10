@@ -2,6 +2,10 @@
 // var config = require('./config.js');
 var Twit = require('twit');
 var request = require("request");
+//local twitter config file or heroku config
+let config;
+//local cryptopanic api config file or heroku config
+let cryptopanicApiKey;
 
 // use this config when deploying to Heroku
 var herokuConfig = {
@@ -11,103 +15,112 @@ var herokuConfig = {
   access_token_secret: process.env['access_token_secret']
 }
 
-let config;
-
 // if app is being deployed to heroku, use herokuConfig
 // else use local config file
 if(process.env.NODE_ENV == 'production'){
   config = herokuConfig;
+  cryptopanicApiKey = process.env['apiKey'];
 }
 else{
   config = require('./config.js');
+  cryptopanicApiKey = require("./config2").apiKey;
 }
+
 
 
 
 //putting our configuration details in twitter
 var Twitter = new Twit(config);
 
-//upon running the bot, tweet the latest top ten crypto prices
-tweetLatestPrices();
+
+// //upon running the bot, tweet the latest top ten crypto prices
+retweetPopularTweets();
 
 // tweet latest crypto news every 29 mins
-setInterval(tweetLatestCryptoNews, 1000*60*29);
+// setInterval(tweetLatestCryptoNews, 1000*60*29);
 
 // tweet latest prices once an hour
-setInterval(tweetLatestPrices, 1000*60*60);
+// setInterval(tweetLatestPrices, 1000*60*60);
 
 // retweet the latest crypto tweets every 3.9 hours
-setInterval(retweetPopularTweets, 1000*60*60*3.9);
+// setInterval(retweetPopularTweets, 1000*60*60*3.9);
+
+
+
+//experimenting with the ccxt package
+// var ccxt = require ('ccxt');
+// console.log (ccxt.exchanges); // print all available exchanges
+
 
 
 // function that will tweet the latest news article headline and url
 function tweetLatestCryptoNews() {
     
     // send a request to the cryptopanic API 
-    request("https://cryptopanic.com/api/posts/?auth_token=b3452c8af088c05e6ca151617bac9b9146c004b8&public=true", function(err, response, body) {
+    request("https://cryptopanic.com/api/posts/?auth_token=" + cryptopanicApiKey + "&public=true", function(err, response, body) {
 
-    // If the request is successful (i.e. if the response status code is 200)
-    if (!err && response.statusCode === 200) {
+      // If the request is successful (i.e. if the response status code is 200)
+      if (!err && response.statusCode === 200) {
 
-      // Parse the body of the site and recover the data coming back
-      // console.log("The data coming back is : " + JSON.parse(body).results);
-      
-      // parse the results coming back and save them in a variable
-      const results = JSON.parse(body).results[1]
+        // Parse the body of the site and recover the data coming back
+        // console.log("The data coming back is : " + JSON.parse(body).results);
+        
+        // parse the results coming back and save them in a variable
+        const results = JSON.parse(body).results[1]
 
-      // storing article headline
-      let newsHeadline = results.title;
+        // storing article headline
+        let newsHeadline = results.title;
 
-      // storing article url
-      let link = results.url;
+        // storing article url
+        let link = results.url;
 
-      // creating a variable to store a coin ticker
-      let ticker;
+        // creating a variable to store a coin ticker
+        let ticker;
 
-      // if the article has a coin ticker then store it
-      if (results.currencies) {
-        ticker = results.currencies[0].code;
+        // if the article has a coin ticker then store it
+        if (results.currencies) {
+          ticker = results.currencies[0].code;
+        }
+
+        console.log("headline : ", newsHeadline);
+
+
+        // if a ticker exists, post a tweet with the ticker, if not then just post a tweet with the headline and url
+        if (ticker) {
+          // send a post request to twitter with the status being the news headline
+          Twitter.post('statuses/update', { status: newsHeadline + " " + link + " " +  "$" + ticker + " #cryptonews" +  " #crypto"}, function(err, data, response) {
+
+            // if there is an error, log the error
+            if(err){
+              console.log(err);
+            }
+            // if there is no error, log the data coming back
+            else {
+              console.log(data.text);
+              console.log("------ YES ticker");
+            }
+
+          });
+        }
+        else {
+          // send a post request to twitter with the status being the news headline
+          Twitter.post('statuses/update', { status: newsHeadline + " " + link + " #cryptonews" +  " #crypto"}, function(err, data, response) {
+
+            // if there is an error, log the error
+            if(err){
+              console.log(err);
+            }
+            // if there is no error, log the data coming back
+            else {
+              console.log(data.text);
+              console.log("------ NO ticker");
+            }
+
+          });
+        }
+
       }
-
-      console.log("headline : ", newsHeadline);
-
-
-      // if a ticker exists, post a tweet with the ticker, if not then just post a tweet with the headline and url
-      if (ticker) {
-        // send a post request to twitter with the status being the news headline
-        Twitter.post('statuses/update', { status: newsHeadline + " " + link + " " +  "$" + ticker + " #cryptonews" +  " #crypto"}, function(err, data, response) {
-
-          // if there is an error, log the error
-          if(err){
-            console.log(err);
-          }
-          // if there is no error, log the data coming back
-          else {
-            console.log(data.text);
-            console.log("------ YES ticker");
-          }
-
-        });
-      }
-      else {
-        // send a post request to twitter with the status being the news headline
-        Twitter.post('statuses/update', { status: newsHeadline + " " + link + " #cryptonews" +  " #crypto"}, function(err, data, response) {
-
-          // if there is an error, log the error
-          if(err){
-            console.log(err);
-          }
-          // if there is no error, log the data coming back
-          else {
-            console.log(data.text);
-            console.log("------ NO ticker");
-          }
-
-        });
-      }
-
-    }
-  });
+    });
 }
 
 
@@ -164,7 +177,7 @@ function retweetPopularTweets() {
   var params = {
     q: '#crypto',
     count: 2,
-    result_type: 'popular',
+    result_type: 'recent',
     lang: 'en'
   }
 
@@ -182,7 +195,7 @@ function retweetPopularTweets() {
         Twitter.post('statuses/retweet/:id', id, function(err, response){
           // If the retweeting fails, log the error message
           if(err){
-            console.log(err[0].message);
+            console.log(err.message);
           }
           // If the retweeting is successful, log the ID of the tweet
           else{
