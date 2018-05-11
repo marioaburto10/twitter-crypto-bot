@@ -23,8 +23,8 @@ Here I can change `q:` to any hashtag or word that I want to look for. `count` i
 
 **These are screen shots of the bot tweeting on its own every so often depending on the time interval that I set or the functions that I run independently**
 
-![This is the bot tweeting the latest prices for the top 10 cryptocurrency coins](screenshots./pricesAndNews.png)
+![This is the bot tweeting the latest prices for the top 10 cryptocurrency coins](screenshots/pricesAndNews.png)
 
-![This is the bot retweeting the top two most popular tweets](screenshots./mostpopularTweets.png)
+![This is the bot retweeting the top two most popular tweets](screenshots/mostpopularTweets.png)
 
 
