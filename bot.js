@@ -147,12 +147,22 @@ function tweetLatestPrices() {
         let rank = data[property].rank;
         let symbol = data[property].symbol;
         let price = data[property].quotes.USD.price;
-        price = numberWithCommas(price);
-        topTenCoins.push({
-          "rank": rank,
-          "symbol": symbol,
-          "price": price
-        });
+
+        if (symbol == 'BTC') {
+          topTenCoins.push({
+            "rank": rank,
+            "symbol": symbol,
+            "price": numberWithCommas(price)
+          });
+        } else {
+          topTenCoins.push({
+            "rank": rank,
+            "symbol": symbol,
+            "price": price
+          });
+        }
+
+        
       }
 
 
@@ -180,7 +190,7 @@ function tweetLatestPrices() {
 
       console.log(tweet);
 
-      //   // send a post request to twitter with the status being the news headline
+        // send a post request to twitter with the status being the news headline
         Twitter.post('statuses/update', { status: tweet }, function(err, data, response) {
 
           // if there is an error, log the error
