@@ -46,10 +46,21 @@ setInterval(tweetLatestCryptoNews, 1000*60*29);
 setInterval(tweetLatestPrices, 1000*60*60);
 
 // retweet the top two most recent crypto tweets every 3.9 hours
-setInterval(retweetMostRecentTweets, 1000*60*60*3.9);
+setInterval(retweetMostRecentTweetsOnCrypto, 1000*60*60*3.9);
 
 // tweet global market data and btc data 7.9 hours
 setInterval(tweetMarketAndBTCData, 1000*60*60*7.9);
+
+// retweet the top two most popular crypto tweets every 11.9 hours
+setInterval(retweetMostPopularTweetsOnCrypto, 1000*60*60*11.9);
+
+// retweet the top two most recent blockchain tweets every 4.9 hours
+setInterval(retweetMostRecentTweetsOnBlockchain, 1000*60*60*4.9);
+
+// retweet the top two most popular blockchain tweets every 10.9 hours
+setInterval(retweetMostPopularTweetsOnBlockchain, 1000*60*60*10.9);
+
+
 
 
 
@@ -381,7 +392,7 @@ function tweetMarketAndBTCData() {
                   // "24Hr Volume: $" + total_volume_24h + "\n" +
                   "BTC Dominance: " + BTC_marketcap_percentage +  "%\n" +
                   "\n" + 
-                  "$BTC DATA (USD):\n" +
+                  "#BTC DATA (USD):\n" +
                   "Price: $" + BTCprice + "\n" +
                   "Market Cap: $" + BTCmarketcap + "\n" +
                   // "24Hr Volume: $" + BTCvolume24hrs + "\n" +
@@ -440,8 +451,8 @@ function tweetMarketAndBTCData() {
 }
 
 
-// function that will find the 2 most popular tweets on crypto and retweet them
-function retweetMostRecentTweets() {
+// function that will find the 2 most recent tweets on crypto and retweet them
+function retweetMostRecentTweetsOnCrypto() {
   // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
   // this will be passed in the get request to Twitter
   let params = {
@@ -481,3 +492,129 @@ function retweetMostRecentTweets() {
   });
 }
 
+
+
+// function that will find the 2 most popular tweets on crypto and retweet them
+function retweetMostPopularTweetsOnCrypto() {
+  // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
+  // this will be passed in the get request to Twitter
+  let params = {
+    q: '#crypto',
+    count: 2,
+    result_type: 'popular',
+    lang: 'en'
+  }
+
+  // attach the search parameters into the get request to find tweets
+  // make a get request to search/tweets and pass in search 
+  Twitter.get('search/tweets', params, function(err, data, response) {
+    // If there is no error, proceed
+    if(!err){
+      // Loop through the returned tweets
+      //our request will return an array of multiple tweets via the data.statuses object.
+      for(let i = 0; i < data.statuses.length; i++){
+        // Get the tweet Id from the returned data
+        let id = { id: data.statuses[i].id_str }
+        // send a post request to retweet a status with a certain ID
+        Twitter.post('statuses/retweet/:id', id, function(err, response){
+          // If the retweeting fails, log the error message
+          if(err){
+            console.log(err.message);
+          }
+          // If the retweeting is successful, log the ID of the tweet
+          else{
+            let username = response.user.screen_name;
+            let tweetId = response.id_str;
+            console.log(`${username} retweeted tweet with ID ${tweetId}`)
+          }
+        });
+      }
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+
+// function that will find the 2 most popular tweets on blockchain and retweet them
+function retweetMostPopularTweetsOnBlockchain() {
+  // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
+  // this will be passed in the get request to Twitter
+  let params = {
+    q: '#blockchain',
+    count: 2,
+    result_type: 'popular',
+    lang: 'en'
+  }
+
+  // attach the search parameters into the get request to find tweets
+  // make a get request to search/tweets and pass in search 
+  Twitter.get('search/tweets', params, function(err, data, response) {
+    // If there is no error, proceed
+    if(!err){
+      // Loop through the returned tweets
+      //our request will return an array of multiple tweets via the data.statuses object.
+      for(let i = 0; i < data.statuses.length; i++){
+        // Get the tweet Id from the returned data
+        let id = { id: data.statuses[i].id_str }
+        // send a post request to retweet a status with a certain ID
+        Twitter.post('statuses/retweet/:id', id, function(err, response){
+          // If the retweeting fails, log the error message
+          if(err){
+            console.log(err.message);
+          }
+          // If the retweeting is successful, log the ID of the tweet
+          else{
+            let username = response.user.screen_name;
+            let tweetId = response.id_str;
+            console.log(`${username} retweeted tweet with ID ${tweetId}`)
+          }
+        });
+      }
+    } else {
+      console.log(err);
+    }
+  });
+}
+
+
+// function that will find the 2 most popular tweets on blockchain and retweet them
+function retweetMostRecentTweetsOnBlockchain() {
+  // q is the required parameter which is used to store search query. It will search for tweets containing #crypto. Where count is the number of tweets, result_type:’recent’ will return the most recent results and lang:’en’ returns English results.
+  // this will be passed in the get request to Twitter
+  let params = {
+    q: '#blockchain',
+    count: 2,
+    result_type: 'recent',
+    lang: 'en'
+  }
+
+  // attach the search parameters into the get request to find tweets
+  // make a get request to search/tweets and pass in search 
+  Twitter.get('search/tweets', params, function(err, data, response) {
+    // If there is no error, proceed
+    if(!err){
+      // Loop through the returned tweets
+      //our request will return an array of multiple tweets via the data.statuses object.
+      for(let i = 0; i < data.statuses.length; i++){
+        // Get the tweet Id from the returned data
+        let id = { id: data.statuses[i].id_str }
+        // send a post request to retweet a status with a certain ID
+        Twitter.post('statuses/retweet/:id', id, function(err, response){
+          // If the retweeting fails, log the error message
+          if(err){
+            console.log(err.message);
+          }
+          // If the retweeting is successful, log the ID of the tweet
+          else{
+            let username = response.user.screen_name;
+            let tweetId = response.id_str;
+            console.log(`${username} retweeted tweet with ID ${tweetId}`)
+          }
+        });
+      }
+    } else {
+      console.log(err);
+    }
+  });
+}
