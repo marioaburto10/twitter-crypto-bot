@@ -19,6 +19,7 @@
   "homepage": "https://github.com/marioaburto10/twitter-crypto-bot#readme",
   "dependencies": {
     "ccxt": "^1.13.76",
+    "cryptocompare": "^0.5.0",
     "node-binance-api": "^0.8.1",
     "request": "^2.85.0",
     "twit": "^2.2.9",
