@@ -36,20 +36,20 @@ else{
 const Twitter = new Twit(config);
 
 //upon running the bot, tweet the latest top ten crypto prices
-// tweetLatestPrices();
+tweetLatestPrices();
 
 
 // tweet latest crypto news every 29 mins
-// setInterval(tweetLatestCryptoNews, 1000*60*29);
+setInterval(tweetLatestCryptoNews, 1000*60*29);
 
 // tweet latest prices once an hour
-// setInterval(tweetLatestPrices, 1000*60*60);
+setInterval(tweetLatestPrices, 1000*60*60);
 
 // retweet the top two most recent crypto tweets every 3.9 hours
-// setInterval(retweetMostRecentTweets, 1000*60*60*3.9);
+setInterval(retweetMostRecentTweets, 1000*60*60*3.9);
 
 // tweet global market data and btc data 7.9 hours
-// setInterval(tweetMarketAndBTCData, 1000*60*60*7.9);
+setInterval(tweetMarketAndBTCData, 1000*60*60*7.9);
 
 
 
@@ -259,7 +259,7 @@ function tweetLatestPrices() {
   });
 }
 
-tweetMarketAndBTCData();
+
 // function that will tweet Bitcoin's and the marketcap's data
 function tweetMarketAndBTCData() {
   // send a request to the coinmarketcap API for the top 10 coins
