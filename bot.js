@@ -334,7 +334,7 @@ function tweetMarketAndBTCData() {
       request("https://api.coinmarketcap.com/v2/global/", function(err, response, body) {
         let total_market_cap;
         if (!err && response.statusCode === 200) {
-          const data = JSON.parse(body).data
+          const data = JSON.parse(body).data;
 
           let BTC_marketcap_percentage = data.bitcoin_percentage_of_market_cap;
           total_market_cap = data.quotes.USD.total_market_cap;
@@ -356,7 +356,7 @@ function tweetMarketAndBTCData() {
           total_volume_24h = numberWithCommas(total_volume_24h);
           total_volume_24h = total_volume_24h.split(",");
 
-          if (total_volume_24h == 5 ) {
+          if (total_volume_24h.length == 5 ) {
             total_volume_24h = total_volume_24h[0] + " Trillion";
 
           } else if (total_volume_24h.length == 4) {
@@ -367,11 +367,14 @@ function tweetMarketAndBTCData() {
           }
 
 
-          request("https://chasing-coins.com/api/v1/std/marketcap", function(err, response, body) {
-            if (!err && response.statusCode === 200) {
-              const data = JSON.parse(body)
 
-                // console.log(data);
+
+          request({url: "https://chasing-coins.com/api/v1/std/marketcap", strictSSL: false}, function(err, response, body) {
+
+            if (!err && response.statusCode === 200) {
+                const data = JSON.parse(body)
+
+
                 MC24hr_change = data.change["24h"]
 
                 MC7d_change = data.change["7d"]
@@ -383,6 +386,8 @@ function tweetMarketAndBTCData() {
                 if (MC7d_change[0] !== "-") {
                   MC7d_change = "+" + MC7d_change;
                 }
+
+
 
 
                 let tweet = "GLOBAL MARKET DATA (USD):\n" +
@@ -417,6 +422,8 @@ function tweetMarketAndBTCData() {
 
                 });
 
+            } else {
+              console.log("no information found");
             }
           });
 
